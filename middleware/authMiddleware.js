@@ -1,3 +1,9 @@
+const express = require('express');
+const app = express();
+
+app.use(express.json()); // To parse JSON request bodies
+app.use(express.urlencoded({ extended: true })); // To parse URL-encoded bodies
+
 const jwt = require('jsonwebtoken');
 const User = require('../models/User'); // Import model User
 

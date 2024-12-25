@@ -4,7 +4,10 @@ const { Sequelize } = require('sequelize');
 const db = new Sequelize('ebakti', 'root', '', {
   host: 'localhost',
   dialect: 'mysql',
-  logging: false, // Nonaktifkan log query di console
 });
+
+db.authenticate()
+  .then(() => console.log('Database connected'))
+  .catch(err => console.error('Database connection error:', err));
 
 module.exports = db;

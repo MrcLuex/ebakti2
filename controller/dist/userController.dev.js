@@ -76,20 +76,33 @@ exports.login = function _callee2(req, res) {
     while (1) {
       switch (_context2.prev = _context2.next) {
         case 0:
+          console.log("Request Body:", req.body); // Debugging log
+
           _req$body2 = req.body, email = _req$body2.email, password = _req$body2.password;
-          _context2.prev = 1;
-          _context2.next = 4;
+
+          if (!(!email || !password)) {
+            _context2.next = 4;
+            break;
+          }
+
+          return _context2.abrupt("return", res.status(400).json({
+            error: 'Email and password are required'
+          }));
+
+        case 4:
+          _context2.prev = 4;
+          _context2.next = 7;
           return regeneratorRuntime.awrap(User.findOne({
             where: {
               email: email
             }
           }));
 
-        case 4:
+        case 7:
           user = _context2.sent;
 
           if (user) {
-            _context2.next = 7;
+            _context2.next = 10;
             break;
           }
 
@@ -97,15 +110,15 @@ exports.login = function _callee2(req, res) {
             error: 'Email tidak ditemukan'
           }));
 
-        case 7:
-          _context2.next = 9;
+        case 10:
+          _context2.next = 12;
           return regeneratorRuntime.awrap(bcrypt.compare(password, user.password));
 
-        case 9:
+        case 12:
           isMatch = _context2.sent;
 
           if (isMatch) {
-            _context2.next = 12;
+            _context2.next = 15;
             break;
           }
 
@@ -113,15 +126,14 @@ exports.login = function _callee2(req, res) {
             error: 'Password salah'
           }));
 
-        case 12:
-          // Buat JWT token
+        case 15:
           token = jwt.sign({
             id: user.user_id,
             role: user.role
-          }, process.env.JWT_SECRET, {
+          }, process.env.JWT_SECRET, // Pastikan JWT_SECRET diambil dari .env
+          {
             expiresIn: '24h'
-          }); // Kirim respons sukses
-
+          });
           res.json({
             message: 'Login successful',
             token: token,
@@ -136,22 +148,22 @@ exports.login = function _callee2(req, res) {
               address: user.address
             }
           });
-          _context2.next = 20;
+          _context2.next = 23;
           break;
 
-        case 16:
-          _context2.prev = 16;
-          _context2.t0 = _context2["catch"](1);
+        case 19:
+          _context2.prev = 19;
+          _context2.t0 = _context2["catch"](4);
           console.error("Error during login:", _context2.t0.message);
           res.status(500).json({
             error: _context2.t0.message
           });
 
-        case 20:
+        case 23:
         case "end":
           return _context2.stop();
       }
     }
-  }, null, null, [[1, 16]]);
+  }, null, null, [[4, 19]]);
 };
 //# sourceMappingURL=userController.dev.js.map

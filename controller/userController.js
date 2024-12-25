@@ -43,31 +43,33 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
+  console.log("Request Body:", req.body); // Debugging log
+
   const { email, password } = req.body;
 
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
+  }
+
   try {
-    // Cari pengguna berdasarkan email
     const user = await User.findOne({ where: { email } });
 
     if (!user) {
       return res.status(404).json({ error: 'Email tidak ditemukan' });
     }
 
-    // Periksa password
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       return res.status(401).json({ error: 'Password salah' });
     }
 
-    // Buat JWT token
     const token = jwt.sign(
       { id: user.user_id, role: user.role },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET, // Pastikan JWT_SECRET diambil dari .env
       { expiresIn: '24h' }
     );
 
-    // Kirim respons sukses
     res.json({
       message: 'Login successful',
       token,
